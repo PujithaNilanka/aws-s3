@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import com.google.gson.Gson;
 
 import java.io.*;
 import java.util.List;
@@ -18,20 +19,22 @@ public class ListS3Buckets {
         listS3Buckets.listBuckets();
         BufferedReader reader = new BufferedReader(new InputStreamReader(listS3Buckets.getObject(bucketName, keyName)));
         String line;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+        try {
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        Gson gson = new Gson();
+        Object object = gson.fromJson(reader,Object.class);
+    }
 
     private void listBuckets() {
         final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
         List<Bucket> buckets = s3.listBuckets();
         System.out.println("Yoour Buckets are : ");
-        for (Bucket b : buckets ) {
+        for (Bucket b : buckets) {
             System.out.println("* " + b.getName());
         }
     }
